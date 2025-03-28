@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "نتائج البحث";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">كلمة البحث غير موجودة</h4>
+                <p class="mb-0">برجاء التأكد من كتابتها بشكل صحيح.</p>
+            </div>
+            <a asp-action="@ViewBag.action" asp-controller="@ViewBag.controller" class="btn btn-primary">العودة إلى الصفحة الرئيسية</a>
+        </div>
+    </div>
+</div>
+

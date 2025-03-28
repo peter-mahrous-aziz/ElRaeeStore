@@ -1,0 +1,188 @@
+﻿@using elraee.ViewModels
+@model EditContactViewModel
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="container py-5" style="text-align:right"> 
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg rounded-lg border-0">
+  
+                <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #007bff, #0047ab);">
+                    <h2 class="mb-3">اتصل بنا</h2>
+                    <p class="mb-0">نحن هنا لمساعدتك! تواصل معنا عبر أي من الطرق التالية:</p>
+                </div>
+
+        
+                <div class="card-body p-4 bg-light">
+
+                    <!-- الاسم -->
+                    <div class="d-flex align-items-center mb-4 p-3 bg-white rounded shadow-sm" style="overflow: hidden;">
+                        <i class="fas fa-user fa-lg text-primary mr-3" style="min-width: 24px;"></i>
+                        <div>
+                            <span class="text-muted" style="word-break: break-all;">@Model.name</span>
+                        </div>
+                    </div>
+
+                    <!-- البريد الإلكتروني -->
+                    <a href="mailto:@Model.email" class="text-decoration-none">
+                        <div class="d-flex align-items-center mb-4 p-3 bg-white rounded shadow-sm hover-effect" style="overflow: hidden;">
+                            <i class="fas fa-envelope fa-lg text-primary mr-3" style="min-width: 24px;"></i>
+                            <div>
+                                <span class="font-weight-bold">البريد الإلكتروني:</span>
+                                <span class="text-info" style="word-break: break-all;">@Model.email</span>
+                            </div>
+                        </div>
+                    </a>
+                    
+
+                    <!-- رقم الواتساب -->
+                    <a href="https://wa.me/@Model.whatsAppNum?text=مرحباً مصنع الراعي ، اريد معرفة بعض التفاصيل عن منتجاتكم :" target="_blank" class="text-decoration-none">
+                        <div class="d-flex align-items-center mb-4 p-3 bg-white rounded shadow-sm hover-effect" style="overflow: hidden;">
+                            <i class="fab fa-whatsapp fa-lg text-primary mr-3" style="min-width: 24px;"></i>
+                            <div>
+                                <span class="font-weight-bold">واتساب:</span>
+                                <span class="text-success" style="word-break: break-all;">@Model.whatsAppNum</span>
+                            </div>
+                        </div>
+                    </a>
+
+
+
+
+                    <!-- ارقام الهاتف -->
+
+
+                    <label>ارقام أخري للتواصل : </label>
+
+
+                    <div class="d-flex align-items-center mb-4 p-3 bg-white rounded shadow-sm " style="word-break: break-all;
+                             display: flex;flex-direction: column;">
+                        @if (Model.phoneNums != null && Model.phoneNums.Count > 0)
+                        {
+                            foreach (var phoneNumber in Model.phoneNums)
+                            {
+                                <a href="tel:@phoneNumber" class="text-decoration-none d-flex align-items-center w-100 hover-effect mt-1 mb-1">
+                                    <i class="fas fa-phone fa-lg text-primary mr-3 " style="min-width: 24px; font-weight:bold"></i>
+                                    <div>
+                                        <span class="text-muted">@phoneNumber</span>
+                                    </div>
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <p>لا توجد أرقام هاتف متاحة.</p>
+                        }
+                    </div>
+
+                    <!-- فيسبوك -->
+                    <a href="@Model.facebookLink" target="_blank" class="text-decoration-none">
+
+                        <div class="d-flex align-items-center mb-4 p-3 bg-white rounded shadow-sm hover-effect" ">
+                            <i class="fab fa-facebook fa-lg text-primary mr-3" style="min-width: 24px;"></i>
+                            <div style="flex: 1; min-width: 0; ">
+                              
+                                <span class="font-weight-bold">فيسبوك:</span>
+                                <span class="text-info" style="display: inline-block; word-break: break-all; text-overflow: ellipsis;">
+                                    @Model.facebookLink</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- العنوان مع رابط جوجل ماب -->
+                    <a href="@Model.gpsLocation" target="_blank" class="text-decoration-none">
+                        <div class="d-flex align-items-center mb-4 p-3 bg-white rounded shadow-sm hover-effect" style="overflow: hidden;">
+                            <i class="fas fa-map-marker-alt fa-lg text-primary mr-3" style="min-width: 24px;"></i>
+                            <div>
+                                <span class="font-weight-bold">العنوان:</span>
+                                <span class="text-muted" style="word-break: break-all;">@Model.address</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- فريم الخريطة -->
+                    <div class="mb-4">
+                        <a href="@Model.gpsLocation" target="_blank" class="text-decoration-none">
+                        <div class="embed-responsive embed-responsive-16by9 rounded shadow-sm hover-effect"
+                                 style=" height:400px; width: 100%;">
+                            <iframe class="embed-responsive-item"
+                                    src="@Model.gpsEmbedLocation"
+                                        style="border: 0;"
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<style>
+
+    .hover-effect:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .fa-lg {
+        margin-right: 12px; 
+    }
+
+
+    .text-primary {
+        color: #007bff !important;
+    }
+
+    .text-info {
+        color: #17a2b8 !important;
+    }
+
+    .text-success {
+        color: #28a745 !important;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+
+    .embed-responsive {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .embed-responsive-16by9 {
+        padding-bottom: 56.25%; 
+    }
+
+
+    @@media (max-width: 768px) {
+        .card-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .card-header p {
+            font-size: 0.9rem;
+        }
+
+        .fa-lg {
+            font-size: 1.2rem;
+        }
+
+        .embed-responsive-16by9 {
+            padding-bottom: 75%;
+        }
+    }
+</style>
+

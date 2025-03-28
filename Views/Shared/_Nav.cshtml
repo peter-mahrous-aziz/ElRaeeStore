@@ -1,0 +1,172 @@
+﻿
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="~/css/nav.css" rel="stylesheet">
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Primary Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark" >
+    <div class="container-fluid">
+        @* Logo *@
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            <img src="/images/logo.jpg" alt="الراعي" class="img-fluid rounded-circle d-inline-block align-top" style="max-height: 40px;">
+        </a>
+
+        @* Toggle button for mobile view *@
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        @* Navbar content *@
+        <div class="collapse navbar-collapse" id="navbarNav" style="text-align: right;">
+
+            @* Search bar *@
+            <form class="form-inline mx-auto search-box" action="/product/Search">
+                <input class="form-control w-75" type="search" placeholder="ابحث عن منتجك..." aria-label="Search" name="name" id="product">
+                <button class="btn btn-warning" type="submit">بحث</button>
+            </form>
+
+            @* Nav items *@
+            <ul class="navbar-nav ml-auto">
+                @* Home link *@
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="home" asp-action="Index">الصفحة الرئيسية</a>
+                </li>
+
+                @* Dropdown for categories *@
+                <li class="nav-item dropdown">
+                    <a class="nav-link" asp-area="" asp-controller="category" asp-action="index">الاقسام</a>
+                    <ul class="dropdown-menu" id="categoriesList" aria-labelledby="navbarDropdown">
+                        @* Categories will be populated here using JavaScript *@
+                    </ul>
+                </li>
+
+                @* Contact Us link *@
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="ContactUS">تواصل معنا</a>
+                </li>
+
+
+                @* Admin Nav (Visible only if authenticated) *@
+                @if (User.Identity.IsAuthenticated == true)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            لوحة التحكم
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                            <li>  <a class="dropdown-item" asp-area="" asp-controller="dashboard" asp-action="categoryDashBoard">الاقسام</a></li>
+                            <li>  <a class="dropdown-item" asp-area="" asp-controller="dashboard" asp-action="productDashBoard">المنتجات</a></li>
+                            <li>  <a class="dropdown-item" asp-area="" asp-controller="contact" asp-action="Edit">بيانات التواصل</a></li>
+                            <li>  <a class="dropdown-item" asp-area="" asp-controller="contact" asp-action="eventCover">كفر المناسبات</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>  <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="SignOut">خروج</a></li>
+                        </ul>
+                    </li>
+                }
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Secondary Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark secondary-navbar" >
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbar-Nav" style="text-align: right;">
+        <ul class="navbar-nav" id="secondaryCategoriesList"
+        style="width: 100%;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        padding : 0pc;">
+
+            @* Toggle button for mobile view *@
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            @* Categories will be populated here using JavaScript *@
+        </ul>
+        </div>
+    </div>
+</nav>
+
+@* JavaScript for dynamic dropdown and search functionality *@
+<script>
+    // Function to check visible categories and toggle secondary navbar
+    function toggleSecondaryNavbar() {
+        const $secondaryNav = $("#secondaryCategoriesList");
+        const visibleCategories = $secondaryNav.find(".nav-item:visible").length;
+
+        if (visibleCategories < 5) {
+            $(".secondary-navbar").hide(); // Hide the secondary navbar
+        } else {
+            $(".secondary-navbar").css("display", "flex"); // Show the secondary navbar
+        }
+    }
+
+    // AJAX call to populate categories dropdown
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("categoryList", "category")', // Replace with your controller name
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var $dropdownMenu = $("#categoriesList");
+                var $secondaryNav = $("#secondaryCategoriesList");
+
+                // Add first 6 categories to dropdown
+                for (var i = 0; i < Math.min(6, data.length); i++) {
+                    var item = data[i];
+                    $dropdownMenu.append(
+                        `<li><a class="dropdown-item" href="/product/ProductsOfSpecificCategory/${item.id}">${item.categorName}</a></li>`
+                    );
+                }
+
+                // Add "المزيد" link if there are more than 6 categories
+                if (data.length > 6) {
+                    $dropdownMenu.append(
+                        `<li class="nav-item">
+                            <a class="dropdown-item" href="/category/index">المزيد</a>
+                        </li>`
+                    );
+                }
+
+                // Add first 6 categories to secondary navbar
+                for (var i = 0; i < Math.min(6, data.length); i++) {
+                    var item = data[i];
+                    $secondaryNav.append(
+                        `<li class="nav-item">
+                            <a class="nav-link" href="/product/ProductsOfSpecificCategory/${item.id}">${item.categorName}</a>
+                        </li>`
+                    );
+                }
+
+            
+                if (data.length > 6) {
+                    $secondaryNav.append(
+                        `<li class="nav-item">
+                            <a class="nav-link" href="/category/index">المزيد</a>
+                        </li>`
+                    );
+                }
+
+                // Check number of visible categories and toggle secondary navbar
+                toggleSecondaryNavbar();
+
+                // Listen for window resize events
+                $(window).resize(function () {
+                    toggleSecondaryNavbar();
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: " + error);
+            }
+        });
+    });
+</script>
+
+@* Include Bootstrap JS *@
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الراعي للصناعات المعدنيه</title>
+    <meta name="description" content="مصنع متخصص في تصنيع وبيع مسمار ضغط الهواء، مسامير البلتات، مسامير بكر الكابلات، مسامير صناديق الذخيرة والصناديق الكيميائية. نوفر منتجات عالية الجودة للصناعات المختلفة.">
+    <meta name="author" content="الراعي للصناعات المعدنيه">
+
+    <meta name="keywords" content="مسمار ضغط الهواء, مسامير البلتات, مسامير بكر الكابلات, مصنع مسامير, مسامير صناعية, توريد المسامير, مسامير خشبية, مسامير معدنية">
+    <meta name="keywords" content="مسمار ضغط الهواء, مسامير البلتات, مسامير بكر الكابلات, مصنع مسامير, مسامير صناعية, توريد المسامير, مسامير خشبية, مسامير معدنية">
+    <meta name="keywords" content="دبوس مستورد, دبابيس صناعية, دبابيس خشب, دبوس ضغط الهواء, استيراد الدبابيس, مورد دبابيس, مصنع مسامير, مسامير صناعية">
+    <meta name="keywords" content="مسدس مسمار ضغط الهواء, مسدس مسامير هوائي, أفضل مسدس مساميرمسدس مسامير صناعي, بيع مسدسات المسامير, مسدس مسامير خشب ومعدن, مسدسات تثبيت المسامير, قطع غيار مسدس المسامير, إبر مسدس المسامير, زناد مسدس مسامير, صيانة مسدسات المسامير, مورد مسدسات المسامير">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/elraee.styles.css" asp-append-version="true" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="~/css/event.css" asp-append-version="true" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1; 
+        }
+
+    </style>
+</head>
+
+<body dir="rtl">
+
+    <header>
+        <partial name="_Nav" />
+
+        <!-- Cover Image Preview -->
+
+        <div class="cover-container" id="coverContainer" >
+            <img id="coverPreview" src="" alt="اطار المناسبات" class="cover-image" style="display:none;" />
+        </div>
+
+    </header>
+
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="site-footer--container">
+        <partial name="_Footer" />
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+    
+            $.ajax({
+                url: '@Url.Action("GeteventCover", "contact")', 
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var $coverPreview = $("#coverPreview");
+
+                    if (data) {
+                     
+                        $coverPreview.attr("src", data);
+                        $coverPreview.css("display", "block");
+                    } else {
+                     
+                        $coverPreview.css("display", "none");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching event cover: " + error);
+                }
+            });
+        });
+    </script>
+
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

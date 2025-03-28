@@ -1,0 +1,183 @@
+﻿
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<style>
+   
+    .custom-header {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        margin-bottom: 1rem; 
+    }
+
+    .col-lg-4, .col-md-6, .col-12 {
+        flex: 0 0 100%; 
+        max-width: 100%;
+    }
+
+    @@media (min-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 50%; 
+            max-width: 50%;
+        }
+    }
+
+    @@media (min-width: 992px) {
+        .col-lg-4 {
+            flex: 0 0 33.333333%; 
+            max-width: 33.333333%;
+        }
+    }
+</style>
+
+@model List<product>
+@{
+    ViewData["Title"] = "Our Products";
+}
+
+@if (ViewBag.msg != null)
+{
+    <div id="successMessage" class="alert alert-success">
+        @ViewBag.msg
+    </div>
+
+    <script>
+        setTimeout(function() {
+            var successMessage = document.getElementById("successMessage");
+            if (successMessage) {
+                successMessage.classList.add("fade-out");
+                setTimeout(() => successMessage.remove(), 1000);
+            }
+        }, 2000);
+    </script>
+}
+
+
+
+<div class="row g-3" id="productsContainer">
+    @if (Model != null && Model.Any())
+    {
+
+        <div class="row">
+            <div class="col-12 text-end">
+                <h2 class="custom-header">المنتجات المتاحه لهذا القسم</h2>
+                <hr />
+            </div>
+        </div>
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 col-12">
+    
+                <div class="card shadow p-3 rounded">
+                    <img src="@item.homeImage" class="card-img-top" alt="product Image" width="100%" height="350">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">@item.Name</h5>
+                        <div class="text-center">
+                            <a asp-action="ProductDetails" asp-controller="product" class="btn btn-outline-info w-100" asp-route-id="@item.Id">تفاصيل</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <div class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">لا يوجد منتجات متاحه لهذا القسم حاليا</h4>
+                    </div>
+                    <a href="@Url.Action("index", "category")" class="btn btn-primary">العودة إلى الصفحة الرئيسية</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div id="loading" style="display: none;" class="text-center my-3">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<input type="hidden" id="pageNo" value="1" />
+<input type="hidden" id="noOfPages" value="@ViewBag.NoOfPages" />
+<input type="hidden" id="searchQuery" value="@ViewBag.Search" />
+<input type="hidden" id="catId" value="@ViewBag.catId" />
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let pageNo = 1;
+            const noOfPages = parseInt(document.getElementById("noOfPages").value);
+            const loading = document.getElementById("loading");
+            const container = document.getElementById("productsContainer");
+            const catId = document.getElementById("catId")?.value; 
+            const search = document.getElementById("searchQuery")?.value;
+
+            window.addEventListener("scroll", function () {
+
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                    if (pageNo < noOfPages) {
+                        pageNo++;
+                        if (catId) {
+                            LoadMoreProductsOfSpecificCategory(catId, pageNo); 
+                        } else if (search) {
+                            loadMoreProducts(pageNo, search); 
+                        }
+                    }
+                }
+            });
+
+            function LoadMoreProductsOfSpecificCategory(catId, pageNo) {
+                loading.style.display = "block"; 
+
+                fetch(`/product/LoadMoreProductsOfSpecificCategory?id=${catId}&page=${pageNo}`) 
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        container.insertAdjacentHTML("beforeend", data); 
+                        loading.style.display = "none"; 
+                    })
+                    .catch(error => {
+                        console.error("Error loading more products:", error);
+                        loading.style.display = "none";
+                    });
+            }
+
+            function loadMoreProducts(page, search) {
+                loading.style.display = "block"; 
+
+                fetch(`/product/loadMore?page=${page}&search=${encodeURIComponent(search)}`) 
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        container.insertAdjacentHTML("beforeend", data); 
+                        loading.style.display = "none"; 
+                    })
+                    .catch(error => {
+                        console.error("Error loading more products:", error);
+                        loading.style.display = "none";
+                    });
+            }
+        });
+    </script>
+}
+
+

@@ -1,0 +1,229 @@
+﻿@model elraee.ViewModels.addProductViewModel
+
+@{
+    ViewData["Title"] = "إضافة منتج";
+}
+
+
+<style>
+
+    .custom-header {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background: white;
+    }
+
+
+    .center-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh; 
+    }
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+@if (ViewBag.msg != null)
+{
+    <div id="successMessage" class="alert alert-success fade-in d-flex justify-content-center align-items-center">
+        @ViewBag.msg
+    </div>
+
+    <script>
+        setTimeout(function() {
+            var successMessage = document.getElementById("successMessage");
+            if (successMessage) {
+                successMessage.classList.add("fade-out");
+                setTimeout(() => successMessage.remove(), 1000);
+            }
+        }, 2000);
+    </script>
+}
+
+
+
+<div class="container mt-5">
+
+    <h1 class="custom-header">إضافة منتج</h1>
+
+
+    <div class="center-form" style="text-align:right">
+        <div class="col-md-8">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <form asp-action="saveProduct" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="name" class="form-label">اسم المنتج</label>
+                                    <input asp-for="name" class="form-control" />
+                                    <span asp-validation-for="name" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Price" class="form-label">السعر</label>
+                                    <input asp-for="Price" class="form-control" />
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="InsteadOfPrice" class="form-label">بدلا من</label>
+                                    <input asp-for="InsteadOfPrice" class="form-control" />
+                                    <span asp-validation-for="InsteadOfPrice" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label">الوصف</label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="brand" class="form-label">العلامة التجارية</label>
+                                    <input asp-for="brand" class="form-control" />
+                                    <span asp-validation-for="brand" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="madeIn" class="form-label">بلد المنشأ</label>
+                                    <input asp-for="madeIn" class="form-control" />
+                                    <span asp-validation-for="madeIn" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="CategoryId" class="form-label">القسم</label>
+                            <select asp-for="CategoryId" asp-items="ViewBag.categories" class="form-select">
+                        
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="homeImage" class="form-label">صورة رئيسية</label>
+                            <input asp-for="homeImage" type="file" class="form-control" accept="image/*" />
+                            <span asp-validation-for="homeImage" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="images" class="form-label">صور إضافية</label>
+                            <input asp-for="images" type="file" class="form-control" multiple accept="image/*" />
+                            <span asp-validation-for="images" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                                   <label class="form-label">القسم</label>
+                                <select id="suggestedCategoryDropdown" class="form-select">
+                                    @foreach (var category in ViewBag.categories)
+                                    {
+                                        <option value="@category.Value">@category.Text</option>
+                                    }
+                                </select>
+                        
+
+                            <div class="row">
+                        
+                                <div class="col-md-5">
+                                    <label>المنتجات المقترحه</label>
+                                    <select id="availableProducts" class="form-select" size="10" multiple>
+                                   
+                                    </select>
+                                </div>
+
+                               
+                                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                    <div>
+                                        <button type="button" id="addProduct" class="btn btn-primary mb-2 w-100" >Add&gt;</button>
+                                        <button type="button" id="removeProduct" class="btn btn-danger mb-2 w-100">&lt;Remove</button>
+                                    </div>
+                                </div>
+
+                               
+                                <div class="col-md-5">
+                                    <label>المنتجات المختاره</label>
+                                    <select id="selectedProducts" name="relativeProductIDs" class="form-select" size="10" multiple>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary me-2">إضافة المنتج</button>
+                            <a asp-controller="dashboard" asp-action="categoryDashboard" class="btn btn-secondary">العودة للقائمة</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+    
+            $('#suggestedCategoryDropdown').change(function () {
+                var selectedCategory = $(this).find('option:selected'); 
+                var categoryId = selectedCategory.val(); 
+
+             
+                $.get('/Product/ProductsOfSpecificCat', { id: categoryId }, function (products) {
+       
+                    var availableProducts = $('#availableProducts');
+                    availableProducts.empty(); 
+
+                    
+                    products.forEach(function (product) {
+                        availableProducts.append(new Option(product.name, product.id));
+                    });
+                });
+            });
+
+   
+            $('#addProduct').click(function () {
+                $('#availableProducts option:selected').appendTo('#selectedProducts');
+            });
+
+         
+            $('#removeProduct').click(function () {
+                $('#selectedProducts option:selected').appendTo('#availableProducts');
+            });
+        });
+    </script>
+}
+
+
+

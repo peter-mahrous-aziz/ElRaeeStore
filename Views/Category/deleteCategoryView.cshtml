@@ -1,0 +1,17 @@
+﻿
+
+@if (ViewBag.msg != null)
+{
+    <div id="successMessage" class="alert alert-success">
+        @ViewBag.msg
+    </div>
+
+    <script>
+        setTimeout(function() {
+            var successMessage = document.getElementById("successMessage");
+            if (successMessage) {
+                successMessage.style.display = "none";
+            }
+        }, 2000);
+    </script>
+}

@@ -1,0 +1,133 @@
+﻿
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+    footer {
+        background-color: #232f3e; 
+        color: #fff;
+        padding: 2rem 0;
+        width: 100%;
+        text-align: right;
+        margin-top: auto; 
+    }
+
+        footer h5 {
+            color: #ff9900;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+            footer a:hover {
+                color: #ff9900;
+            }
+
+    .map-container {
+        width: 100%;
+        height: 150px;
+        background-color: #37475A;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+</style>
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <!-- الأقسام -->
+            <div class="col-md-4">
+                <h5>الأقسام</h5>
+                <ul class="list-unstyled" id="footerCategoriesList" style="padding:0">
+              
+                </ul>
+                <a href="/category/Index" class="text-warning">المزيد</a>
+            </div>
+
+            <!-- العنوان والموقع -->
+            <div class="col-md-4">
+                <h5>العنوان</h5>
+                <p id="footerAddress">123 شارع النهار، القاهرة، مصر</p>
+                <div class="map-container">
+                    <iframe id="footerMap" src="" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <!-- تواصل معنا -->
+            <div class="col-md-4">
+                <h5>تواصل معنا</h5>
+                <ul class="list-unstyled" id="footerContactList" style="padding:0">
+                   
+
+                    <li> رئيس مجلس الاداره : </li>
+                    <li>أ/ جرجس رسمي فهمي</li>
+                    <li> <a href="tel:+201200888477">ت/ +201200888477</a></li>
+                </ul>
+                
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $.ajax({
+            url: '@Url.Action("categoryList", "category")',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var $footerCategories = $("#footerCategoriesList");
+
+           
+                for (var i = 0; i < Math.min(4, data.length); i++) {
+                    var item = data[i];
+                    $footerCategories.append(
+                        `<li><a href="/product/ProductsOfSpecificCategory/${item.id}">${item.categorName}</a></li>`
+                    );
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching categories: " + error);
+            }
+        });
+
+
+        $.ajax({
+            url: '@Url.Action("GetContact", "contact")', 
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+              
+                $("#footerAddress").text(data.address);
+
+               
+                $("#footerMap").attr("src", data.gpsEmbedLocation);
+
+              
+                var $footerContactList = $("#footerContactList");
+                $footerContactList.append(`<li><a href="mailto:${data.email}">${data.email}</a></li>`);
+                data.phoneNums.forEach(function (phone) {
+                    $footerContactList.append(`<li><a href="tel:${phone}">${phone}</a></li>`);
+                });
+                $footerContactList.append(`<li><a href="https://wa.me/${data.whatsAppNum}">واتساب: ${data.whatsAppNum}</a></li>`);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching contact info: " + error);
+            }
+        });
+    });
+</script>

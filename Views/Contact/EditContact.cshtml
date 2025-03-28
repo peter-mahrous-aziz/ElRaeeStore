@@ -1,0 +1,243 @@
+﻿@model elraee.ViewModels.EditContactViewModel
+
+@{
+    ViewData["Title"] = "EditContact";
+}
+
+<style>
+
+    .custom-header {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+
+    .custom-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background: white;
+    }
+
+    .center-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh; 
+        text-align:right;
+    }
+
+
+    .btn-custom {
+        margin: 5px;
+        width: 100%;
+    }
+</style>
+
+
+
+@if (ViewBag.msg != null)
+{
+    <div id="successMessage" class="alert alert-success">
+        @ViewBag.msg
+    </div>
+
+    <script>
+        setTimeout(function() {
+            var successMessage = document.getElementById("successMessage");
+            if (successMessage) {
+                successMessage.style.display = "none";
+            }
+        }, 2000);
+    </script>
+}
+
+<div class="container mt-5">
+
+    <h1 class="custom-header">قائمة التواصل</h1>
+    <div class="center-form">
+        <div class="col-md-8">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <form asp-action="saveContact" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="name" class="form-label">الاسم</label>
+                                    <input asp-for="name" class="form-control" />
+                                    <span asp-validation-for="name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="email" class="form-label">الايميل</label>
+                                    <input asp-for="email" class="form-control" />
+                                    <span asp-validation-for="email" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="address" class="form-label">العنوان</label>
+                                    <input asp-for="address" class="form-control" />
+                                    <span asp-validation-for="address" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="facebookLink" class="form-label">رابط فيسبوك</label>
+                                    <input asp-for="facebookLink" class="form-control" />
+                                    <span asp-validation-for="facebookLink" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="gpsLocation" class="form-label">رابط المكان علي الخريطه</label>
+                                    <input asp-for="gpsLocation" class="form-control" />
+                                    <span asp-validation-for="gpsLocation" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                           
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label asp-for="gpsEmbedLocation" class="form-label">رابط المكان علي الخريطه (مدمج) </label>
+                                        <input asp-for="gpsEmbedLocation" class="form-control" />
+                                        <span asp-validation-for="gpsEmbedLocation" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label asp-for="whatsAppNum" class="form-label">رقم واتساب</label>
+                                    <input asp-for="whatsAppNum" class="form-control" />
+                                    <span asp-validation-for="whatsAppNum" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group mb-3">
+                            <label>رقم هاتف</label>
+                            <div id="phoneNumbersContainer">
+                                @if (Model.phoneNums != null && Model.phoneNums.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.phoneNums.Count; i++)
+                                    {
+                                        <div class="phone-number-group">
+                                            <input name="phoneNums" value="@Model.phoneNums[i]" class="form-control" />
+                                            <button type="button" class="btn btn-success" onclick="addPhoneNumberField()">OK</button>
+                                            <button type="button" class="btn btn-danger" onclick="removePhoneNumberField(this)">X</button>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="phone-number-group">
+                                        <input name="phoneNums" class="form-control" />
+                                        <button type="button" class="btn btn-success" onclick="addPhoneNumberField()">OK</button>
+                                        <button type="button" class="btn btn-danger" onclick="removePhoneNumberField(this)">X</button>
+                                    </div>
+                                }
+                            </div>
+                    
+                            <button type="button" id="addPhoneNumberButton" class="btn btn-primary mt-2" onclick="addPhoneNumberField()" style="display: none;">إضافة رقم هاتف</button>
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary me-2">اضافة</button>
+                            <a asp-action="Index" asp-controller="home" class="btn btn-secondary">العوده للقائمة الرئيسيه</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let phoneNumberIndex = @(Model.phoneNums != null ? Model.phoneNums.Count : 1);
+
+        function addPhoneNumberField() {
+            const container = document.getElementById("phoneNumbersContainer");
+            const addButton = document.getElementById("addPhoneNumberButton");
+
+            const newInputGroup = document.createElement("div");
+            newInputGroup.className = "phone-number-group";
+
+            const newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.name = "phoneNums";
+            newInput.className = "form-control";
+
+            const okButton = document.createElement("button");
+            okButton.type = "button";
+            okButton.className = "btn btn-success";
+            okButton.innerText = "OK";
+            okButton.onclick = addPhoneNumberField;
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "btn btn-danger";
+            removeButton.innerText = "X";
+            removeButton.onclick = function() {
+                removePhoneNumberField(this);
+            };
+
+            newInputGroup.appendChild(newInput);
+            newInputGroup.appendChild(okButton);
+            newInputGroup.appendChild(removeButton);
+            container.appendChild(newInputGroup);
+
+        
+            addButton.style.display = "none";
+
+            phoneNumberIndex++;
+        }
+
+        function removePhoneNumberField(button) {
+            const inputGroup = button.closest(".phone-number-group");
+            if (inputGroup) {
+                inputGroup.remove();
+            }
+
+    
+            const container = document.getElementById("phoneNumbersContainer");
+            const addButton = document.getElementById("addPhoneNumberButton");
+            if (container.children.length === 0) {
+                addButton.style.display = "block";
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.getElementById("phoneNumbersContainer");
+            const addButton = document.getElementById("addPhoneNumberButton");
+            if (container.children.length === 0) {
+                addButton.style.display = "block";
+            }
+        });
+    </script>
+}
+
+
+

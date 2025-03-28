@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewData["Title"] = "SearchUser";
+}
+
+<h1>SearchUser</h1>
+<form asp-action="SearchUser" method="post">
+    <div class="form-group">
+        <label for="userId">User ID</label>
+        <input type="text" id="userId" name="userId" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>

@@ -1,0 +1,79 @@
+﻿
+@model elraee.ViewModels.LoginUserViewModel
+
+@{
+    ViewData["Title"] = "تسجيل الدخول";
+}
+
+<link rel="stylesheet" href="~/css/log.css" asp-append-version="true" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="login-card shadow col-md-4 mx-auto shadow p-3 my-5 rounded">
+        <h1 class="text-center mb-4">تسجيل الدخول</h1>
+        <hr class="mb-4" />
+
+        <form asp-action="SaveLogin" style="text-align:right;">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- حقل الاسم -->
+            <div class="form-group mb-3" >
+                <label asp-for="Name" class="form-label">اسم المستخدم</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input asp-for="Name" class="form-control" placeholder="اسم المستخدم" />
+                </div>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <!-- حقل كلمة المرور -->
+            <div class="form-group mb-4">
+                <label asp-for="Password" class="form-label">كلمة المرور</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input asp-for="Password" type="password" class="form-control" id="password" placeholder="أدخل كلمة المرور" />
+                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- تذكرني -->
+            <div class="form-group form-check mb-4">
+                <label class="form-check-label" asp-for="RememberMe">تذكرني  </label>
+                <input class="form-check-input" asp-for="RememberMe" />
+            </div>
+
+            <!-- زر تسجيل الدخول -->
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary w-100 py-2">تسجيل الدخول</button>
+            </div>
+        </form>
+
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+
+            togglePassword.addEventListener('click', function () {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                // تغيير الأيقونة
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        });
+    </script>
+}
+

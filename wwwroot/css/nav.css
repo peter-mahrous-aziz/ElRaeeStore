@@ -1,0 +1,95 @@
+﻿
+
+.navbar {
+    background-color: #232f3e; 
+}
+
+.navbar-brand img {
+    max-height: 40px;
+}
+
+.search-box {
+    width: 60%;
+}
+
+.nav-link {
+    color: #fff !important;
+}
+
+    .nav-link:hover {
+        color: #ff9900 !important; 
+    }
+
+.dropdown-menu {
+    max-height: 200px;
+    direction: rtl;
+    text-align: right;
+    overflow-y: auto;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Secondary Navbar */
+.secondary-navbar {
+    background-color: #37475A; 
+    padding: 0.5rem 1rem;
+    display: flex; 
+}
+
+    .secondary-navbar .nav-link {
+        color: #fff !important;
+        font-size: 14px;
+    }
+
+        .secondary-navbar .nav-link:hover {
+            background-color: #ff9900 !important;
+        }
+
+/* Media Queries for responsive secondary navbar */
+@media screen and (max-width: 1200px) {
+    .secondary-navbar .nav-item {
+        display: inline-block; /* يظهر 5 categories */
+    }
+
+        .secondary-navbar .nav-item:nth-child(n+6) {
+            display: none; /* يخفي الباقي */
+        }
+}
+
+@media screen and (max-width: 992px) {
+    .secondary-navbar .nav-item {
+        display: inline-block;  يظهر 4 categories 
+    }
+
+        .secondary-navbar .nav-item:nth-child(n+5) {
+            display: none;  يخفي الباقي 
+        }
+}
+
+@media screen and (max-width: 768px) {
+    .secondary-navbar .nav-item {
+        display: inline-block;  يظهر 3 categories 
+    }
+
+        .secondary-navbar .nav-item:nth-child(n+4) {
+            display: none;  يخفي الباقي 
+        }
+}
+
+@media screen and (max-width: 576px) {
+    .secondary-navbar .nav-item {
+        display: inline-block;  يظهر 2 categories 
+    }
+
+        .secondary-navbar .nav-item:nth-child(n+3) {
+            display: none;  يخفي الباقي 
+        }
+}
+
+@media screen and (max-width: 400px) {
+    .secondary-navbar {
+        display: none;  يخفي الـ Secondary Navbar كله 
+    }
+}

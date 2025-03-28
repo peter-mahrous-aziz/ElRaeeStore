@@ -1,0 +1,124 @@
+﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+ 
+    .custom-header {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease; 
+        margin-bottom: 1rem; 
+    }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+        }
+</style>
+
+@model List<category>
+@{
+    ViewData["Title"] = "Our Categories";
+}
+
+@if (ViewBag.msg != null)
+{
+    <div id="successMessage" class="alert alert-success fade-in">
+        @ViewBag.msg
+    </div>
+
+    <script>
+        setTimeout(function() {
+            var successMessage = document.getElementById("successMessage");
+            if (successMessage) {
+                successMessage.classList.add("fade-out");
+                setTimeout(() => successMessage.remove(), 1000); // نزيل الـ Message بعد الانتهاء من الـ Animation
+            }
+        }, 2000);
+    </script>
+}
+
+
+<div class="row">
+    <div class="col-12 text-end">
+        <h2 class="custom-header">الأقسام المتاحة</h2>
+        <hr />
+    </div>
+</div>
+
+
+<div class="row g-3" id="categoryContainer">
+
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <a asp-action="ProductsOfSpecificCategory" asp-controller="product" asp-route-id="@item.id" class="card shadow text-decoration-none text-dark">
+                <img src="@item.img" class="card-img-top" alt="Category Image" width="100%" height="350" style="object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title text-center">@item.name</h5>
+                </div>
+            </a>
+        </div>
+    }
+</div>
+
+
+<div id="loading" style="display: none;" class="text-center my-3">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+
+<input type="hidden" id="pageNo" value="1" />
+<input type="hidden" id="noOfPages" value="@ViewBag.NoOfPages" />
+<input type="hidden" id="searchQuery" value="@ViewBag.Search" />
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let pageNo = 1;
+            const noOfPages = parseInt(document.getElementById("noOfPages").value);
+            const loading = document.getElementById("loading");
+            const container = document.getElementById("categoryContainer");
+            const search = document.getElementById("searchQuery")?.value;
+
+            window.addEventListener("scroll", function () {
+         
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                    if (pageNo < noOfPages) {
+                        pageNo++;
+                        loadMore(pageNo, search); 
+                    }
+                }
+            });
+
+            function loadMore(page, search) {
+                loading.style.display = "block"; 
+
+                fetch(`/category/loadMore?page=${page}&search=${encodeURIComponent(search)}`) 
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        container.insertAdjacentHTML("beforeend", data); 
+                        loading.style.display = "none"; 
+                    })
+                    .catch(error => {
+                        console.error("Error loading more products:", error);
+                        loading.style.display = "none";
+                    });
+            }
+        });
+    </script>
+}

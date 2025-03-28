@@ -1,0 +1,127 @@
+﻿@model elraee.ViewModels.RegisterUserViewModel
+
+@{
+    ViewData["Title"] = "تسجيل حساب جديد";
+}
+
+<link rel="stylesheet" href="~/css/log.css" asp-append-version="true" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="login-container col-md-4 mx-auto shadow p-3 my-5 rounded">
+        <div class="login-card shadow-lg p-4 rounded">
+            <h1 class="text-center mb-4">تسجيل حساب جديد</h1>
+            <hr class="mb-4" />
+
+            <form asp-action="SaveRegister" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <!-- حقل اسم المستخدم -->
+                <div class="form-group mb-3">
+                    <label asp-for="UserName" class="form-label">اسم المستخدم</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input asp-for="UserName" class="form-control" placeholder="أدخل اسم المستخدم" />
+                    </div>
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <!-- حقل كلمة المرور -->
+                <div class="form-group mb-3">
+                    <label asp-for="Password" class="form-label">كلمة المرور</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="أدخل كلمة المرور" />
+                        <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- حقل تأكيد كلمة المرور -->
+                <div class="form-group mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label">تأكيد كلمة المرور</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="أعد إدخال كلمة المرور" />
+                        <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <!-- حقل البريد الإلكتروني -->
+                <div class="form-group mb-3">
+                    <label asp-for="Email" class="form-label">البريد الإلكتروني</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input asp-for="Email" class="form-control" placeholder="أدخل بريدك الإلكتروني" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <!-- حقل رقم الهاتف -->
+                <div class="form-group mb-4">
+                    <label asp-for="phoneNumber" class="form-label">رقم الهاتف</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                        <input asp-for="phoneNumber" class="form-control" placeholder="أدخل رقم الهاتف" />
+                    </div>
+                    <span asp-validation-for="phoneNumber" class="text-danger"></span>
+                </div>
+
+                <!-- زر التسجيل -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary w-100 py-2">تسجيل</button>
+                </div>
+            </form>
+
+            <hr class="my-4" />
+
+            <!-- رابط تسجيل الدخول -->
+            <div class="text-center">
+                <p class="mb-0">لديك حساب بالفعل؟ <a asp-action="Login" class="text-primary">سجل الدخول الآن</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // إظهار/إخفاء كلمة المرور
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('Password');
+
+            togglePassword.addEventListener('click', function () {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                // تغيير الأيقونة
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+
+            // إظهار/إخفاء تأكيد كلمة المرور
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const confirmPassword = document.getElementById('ConfirmPassword');
+
+            toggleConfirmPassword.addEventListener('click', function () {
+                const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                confirmPassword.setAttribute('type', type);
+
+                // تغيير الأيقونة
+                this.querySelector('i').classList.toggle('fa-eye');
+                this.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        });
+    </script>
+}
+
+

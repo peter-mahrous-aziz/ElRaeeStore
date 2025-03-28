@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "elraee", "elraee.csproj", "{CCD47548-DAB5-4B2A-9534-ED36C4E48495}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CCD47548-DAB5-4B2A-9534-ED36C4E48495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCD47548-DAB5-4B2A-9534-ED36C4E48495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCD47548-DAB5-4B2A-9534-ED36C4E48495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCD47548-DAB5-4B2A-9534-ED36C4E48495}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C4073B2F-830C-47AB-B753-FE838A201B35}
+	EndGlobalSection
+EndGlobal

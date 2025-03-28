@@ -1,0 +1,269 @@
+﻿<style>
+
+    .custom-header {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+@using elraee;
+@using elraee.ViewModels
+@model elraee.ViewModels.updateProductViewModel
+
+@{
+    ViewData["Title"] = "تعديل بيانات المنتج";
+}
+
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4  custom-header">تعديل منتج</h1>
+
+    @if (ViewBag.msg != null)
+    {
+        <div id="successMessage" class="alert alert-success fade-in d-flex justify-content-center align-items-center" >
+            @ViewBag.msg
+        </div>
+
+        <script>
+            setTimeout(function() {
+                var successMessage = document.getElementById("successMessage");
+                if (successMessage) {
+                    successMessage.classList.add("fade-out");
+                    setTimeout(() => successMessage.remove(), 1000);
+                }
+            }, 2000);
+        </script>
+    }
+
+    <div class="row" style="text-align:right">
+        
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+         
+                <div class="main-image-box text-center p-3">
+                    <img id="mainImage" src="@Model.oldHomeImage" class="img-fluid rounded" alt="Product Image" style="max-height: 300px;">
+                </div>
+
+               
+                @if (Model.oldImageList != null && Model.oldImageList.Any())
+                {
+                    <div class="thumbnails p-3">
+                        <div class="row">
+                            @foreach (string img in Model.oldImageList)
+                            {
+                                <div class="col-4 mb-2">
+                                    <img src="@img" alt="@Model.name" class="img-thumbnail thumbnail-img" style="cursor: pointer; max-height: 80px;" onclick="changeMainImage('@img')" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form asp-action="saveUpdate" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="name" class="form-label">اسم المنتج</label>
+                                    <input asp-for="name" class="form-control" />
+                                    <span asp-validation-for="name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Price" class="form-label">السعر</label>
+                                    <input asp-for="Price" class="form-control" />
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label">الوصف</label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="brand" class="form-label">العلامة التجارية</label>
+                                    <input asp-for="brand" class="form-control" />
+                                    <span asp-validation-for="brand" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="madeIn" class="form-label">بلد المنشأ</label>
+                                    <input asp-for="madeIn" class="form-control" />
+                                    <span asp-validation-for="madeIn" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="categoryId" class="form-label">الاقسام</label>
+                            <select asp-for="categoryId" asp-items="ViewBag.categories" class="form-select">
+                                @foreach (SelectListItem category in ViewBag.categories)
+                                {
+                                    <option value="@category.Value" selected>@category.Text</option>
+                                }
+                            </select>
+                            <span asp-validation-for="categoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.newHomeImage" class="form-label">صورة رئيسية جديدة</label>
+                            <input asp-for="@Model.newHomeImage" type="file" class="form-control" accept="image/*" />
+                            <span asp-validation-for="@Model.newHomeImage" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.newImageList" class="form-label">صور إضافية جديدة</label>
+                            <input asp-for="@Model.newImageList" type="file" class="form-control" multiple accept="image/*" />
+                            <span asp-validation-for="@Model.newImageList" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+
+                            <label class="form-label">القسم</label>
+                            <select id="suggestedCategoryDropdown" class="form-select">
+                                @foreach (var category in ViewBag.categories)
+                                {
+                                    <option value="@category.Value">@category.Text</option>
+                                }
+                            </select>
+
+                            <div class="row">
+                               
+                                <div class="col-md-5">
+                                    <label>المنتجات المقترحه</label>
+                                    <select id="availableProducts" class="form-select" size="10" multiple>
+                                        @foreach (var product in ViewBag.products)
+                                        {
+                                            <option value="@product.Value">@product.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+
+                                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                    <div>
+                                        <button type="button" id="addProduct" class="btn btn-primary mb-2 w-100">Add&gt;</button>
+                                        <button type="button" id="removeProduct" class="btn btn-danger mb-2 w-100">&lt;Remove</button>
+                                    </div>
+                                </div>
+
+                               
+                                <div class="col-md-5">
+                                    <label>المنتجات المختاره</label>
+                                    <select id="selectedProducts" name="relativeProductIDs" class="form-select" size="10" multiple>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (Model.oldImageList!=null)
+                        {
+                            <div class="form-group">
+                                <input type="hidden" name="id" value="@Model.id" />
+                                <input type="hidden" name="oldHomeImage" value="@Model.oldHomeImage" />
+                                @for (var i = 0; i < Model.oldImageList.Count; i++)
+                                {
+                                    <input type="hidden" name="oldImageList[@i]" value="@Model.oldImageList[i]" />
+                                }
+                            </div>
+                            
+                        }
+                    
+
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary me-2">حفظ التعديلات</button>
+                            <a asp-controller="dashboard" asp-action="productDashboard" class="btn btn-secondary">العودة للقائمة</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+       
+        function changeMainImage(newSrc) {
+            document.getElementById('mainImage').src = newSrc;
+        }
+    </script>
+
+
+     <script>
+        $(document).ready(function () {
+     
+             var relativeIds = @Html.Raw(Json.Serialize(ViewBag.relatives));
+
+          
+            relativeIds.forEach(function (relativeProductId) {
+                $('#availableProducts option[value="' + relativeProductId + '"]').prop('selected', true);
+            });
+      
+            $('#availableProducts option:selected').appendTo('#selectedProducts');
+
+         
+            $('#addProduct').click(function () {
+                $('#availableProducts option:selected').appendTo('#selectedProducts');
+            });
+
+    
+            $('#removeProduct').click(function () {
+                $('#selectedProducts option:selected').appendTo('#availableProducts');
+            });
+        });
+
+       
+            $('#suggestedCategoryDropdown').change(function () {
+                var selectedCategory = $(this).find('option:selected'); 
+                var categoryId = selectedCategory.val(); 
+
+       
+                $.get('/Product/ProductsOfSpecificCat', { id: categoryId }, function (products) {
+                    
+                    var availableProducts = $('#availableProducts');
+                    availableProducts.empty();
+
+                    products.forEach(function (product) {
+                        availableProducts.append(new Option(product.name, product.id));
+                    });
+                });
+            });
+
+
+    </script>
+
+
+}
+
+

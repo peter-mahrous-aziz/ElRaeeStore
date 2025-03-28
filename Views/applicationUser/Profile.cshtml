@@ -1,0 +1,23 @@
+﻿@model elraee.ViewModels.ProfileViewModel
+
+@{
+    ViewBag.Title = "User Profile";
+}
+
+
+<div class="profile-info col-md-4 mx-auto shadow p-3 my-5 rounded">
+    <h2 class="text-center">User Profile</h2><hr/>
+
+    <dl class="dl-horizontal">
+        <dt>First Name</dt>
+        <dd>@Model.Name</dd>
+
+        <dt>Email</dt>
+        <dd>@Model.Email</dd>
+
+        <dt>Phone Number</dt>
+        <dd>@Model.PhoneNumber</dd>
+        <td><a class="btn btn-info w-100" href="/applicationUser/EditProfile/@Model.Id">Edit</a></td>
+        <!-- Add other fields as needed -->
+    </dl>
+</div>

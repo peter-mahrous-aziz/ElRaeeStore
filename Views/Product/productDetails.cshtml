@@ -1,0 +1,171 @@
+﻿@model elraee.Models.product
+
+@{
+    ViewBag.Title = "تفاصيل المنتج";
+}
+
+<link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
+
+<div class="container mt-5" style="text-align:right">
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="main-image text-center mb-4">
+                <a href="@Model.homeImage" data-lightbox="gallery" data-title="@Model.Name">
+                    <img src="@Model.homeImage" alt="@Model.Name" class="img-fluid rounded shadow" id="mainImage" style="width: 350px; height: 350px; object-fit: cover;" />
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h1 class="product-title">@Model.Name</h1>
+            <div class="rating mb-3">
+                <span class="text-warning">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <i class="far fa-star"></i>
+                </span>
+                <span class="text-muted">(4.5 تقييم)</span>
+            </div>
+            <div class="price mb-4">
+                <span class="h3 text-danger">@Model.Price جنيه</span>
+                @if (Model.InsteadOfPrice != null)
+                {
+                    <span class="text-muted text-decoration-line-through ms-2">@(Model.InsteadOfPrice) جنيه</span>
+                }
+            </div>
+            <p class="product-description">@Model.Description</p>
+            <div class="product-details mb-4">
+                <p><strong>العلامة التجارية:</strong> @Model.brand</p>
+                <p><strong>بلد المنشأ:</strong> @Model.madeIn</p>
+            </div>
+
+            <div class="contact-section">
+                <h4 class="mb-3">للتواصل معنا</h4>
+                <div class="d-flex justify-content-start" id="contactIcons">
+        
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if (Model.images != null && Model.images.Any())
+    {
+        <div class="row mt-5">
+            <h3 class="mb-4">معرض الصور</h3>
+            @foreach (var img in Model.images)
+            {
+                <div class="col-md-3 mb-4 gallery">
+                    <a href="@img.Image" data-lightbox="gallery" data-title="@Model.Name">
+                        <img src="@img.Image" alt="@Model.Name" class="img-fluid rounded shadow" style="width: 250px; height: 250px; object-fit: cover;" />
+                    </a>
+                </div>
+            }
+        </div>
+    }
+
+
+    @if (Model.relativeProducts != null && Model.relativeProducts.Any())
+    {
+        <hr class="my-5" />
+        <div class="row mt-5" id="suggestedProducts">
+            <h3 class="mb-4">منتجات قد تحتاج اليها مع هذا المنتج </h3>
+ 
+        </div>
+    }
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+  
+        $.ajax({
+            url: '@Url.Action("GetContact", "Contact")', 
+            type: 'GET',
+            success: function (response) {
+                var contactIcons = $('#contactIcons'); 
+
+ 
+                if (response.whatsAppNum) {
+                    var whatsappLink = `https://wa.me/${response.whatsAppNum}?text=مرحباً مصنع الراعي ، أنا مهتم بالمنتج التالي: \n ${encodeURIComponent(window.location.href)}`;
+                    contactIcons.append(`
+                        <a href="${whatsappLink}" target="_blank" class="contact-icon me-3">
+                            <i class="fab fa-whatsapp fa-2x text-success"></i>
+                        </a>
+                    `);
+                }
+
+                if (response.phoneNums && response.phoneNums.length > 0) {
+                    var firstPhone = response.phoneNums[0]; 
+                    contactIcons.append(`
+                        <a href="tel:${firstPhone}" class="contact-icon me-3">
+                            <i class="fas fa-phone-alt fa-2x text-secondary"></i>
+                        </a>
+                    `);
+                }
+
+  
+                if (response.email) {
+                    contactIcons.append(`
+                        <a href="mailto:${response.email}" target="_blank" class="contact-icon me-3">
+                            <i class="fas fa-envelope fa-2x text-primary"></i>
+                        </a>
+                    `);
+                }
+
+            
+                if (response.facebookLink) {
+                    contactIcons.append(`
+                        <a href="${response.facebookLink}" target="_blank" class="contact-icon me-3">
+                            <i class="fab fa-facebook fa-2x text-info"></i>
+                        </a>
+                    `);
+                }
+            },
+            error: function () {
+                console.error("حدث خطأ أثناء جلب بيانات الاتصال.");
+            }
+        });
+
+
+        var parentId = @Model.Id; 
+        var url = '@Url.Action("relativeProds", "product")'; 
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            data: { parentId: parentId },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    var html = '';
+                    response.forEach(function (product) {
+                        html += `
+                            <div class="col-md-3 mb-4">
+                                <div class="card">
+                                    <img src="${product.homeImage}" class="card-img-top" alt="${product.name}" style="width: 100%; height: 200px; object-fit: cover;">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">${product.name}</h5>
+                                        <a href="/product/ProductDetails/${product.id}" target="_blank" class="btn btn-primary">تفاصيل</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    $('#suggestedProducts').append(html); 
+                } else {
+                    $('#suggestedProducts').append('<p>لا توجد منتجات مقترحة في الوقت الحالي.</p>');
+                }
+            },
+            error: function () {
+                $('#suggestedProducts').append('<p>حدث خطأ أثناء جلب البيانات.</p>');
+            }
+        });
+    });
+</script>
